@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "Local Cred Vault",
+  "version": "1.0.0",
+  "description": "按登录地址与项目分组管理本地开发环境的账号密码，支持一键复制与本地 JSON 文件备份。",
+  "permissions": [
+    "clipboardWrite"
+  ],
+  "action": {
+    "default_title": "Local Cred Vault",
+    "default_popup": "src/popup.html",
+    "default_icon": {
+      "16": "src/icons/icon16.png",
+      "48": "src/icons/icon48.png",
+      "128": "src/icons/icon128.png"
+    }
+  },
+  "options_ui": {
+    "page": "src/options.html",
+    "open_in_tab": true
+  },
+  "icons": {
+    "16": "src/icons/icon16.png",
+    "48": "src/icons/icon48.png",
+    "128": "src/icons/icon128.png"
+  }
+}

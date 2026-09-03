@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Local Cred Vault</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="popup">
+  <header class="hd">
+    <div class="brand"><span class="dot"></span>Local Cred Vault</div>
+    <button id="btnManage" class="btn btn-ghost btn-sm" title="打开完整管理页">管理</button>
+  </header>
+
+  <div id="banner" class="banner" hidden></div>
+
+  <div id="body">
+    <div class="toolbar">
+      <input id="search" type="search" placeholder="搜索项目 / 地址 / 账号" autocomplete="off" spellcheck="false">
+      <select id="groupBy" title="分组方式">
+        <option value="project">按项目</option>
+        <option value="origin">按地址</option>
+        <option value="none">不分组</option>
+      </select>
+    </div>
+
+    <main id="list" class="list" aria-live="polite"></main>
+
+    <footer class="ft">
+      <span id="count"></span>
+      <button id="btnAdd" class="btn btn-ghost btn-sm">新增凭据</button>
+    </footer>
+  </div>
+
+  <div id="toast" class="toast" role="status" hidden></div>
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

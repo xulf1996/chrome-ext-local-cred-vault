@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Local Cred Vault · UI 预览</title>
+  <link rel="stylesheet" href="../src/style.css">
+  <style>
+    body { background: #0f1115; padding: 32px 0 48px; }
+    .preview-row {
+      display: flex;
+      gap: 28px;
+      align-items: flex-start;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding: 0 24px;
+    }
+    .label { color: #6b7382; font-size: 12px; text-align: center; margin-bottom: 10px; }
+    .popup-frame {
+      border: 1px solid #2a3140; border-radius: 14px; overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,.45);
+    }
+    .options-frame {
+      width: 1080px; max-width: calc(100vw - 32px); background: #16181d;
+      border: 1px solid #2a3140; border-radius: 14px; overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,.45);
+    }
+    h2.title { color: #98a1b0; font-size: 13px; font-weight: 500; margin: 0 0 18px; text-align: center; }
+    .hint { color: #6b7382; font-size: 12px; text-align: center; margin: 26px 24px 0; line-height: 1.8; }
+    .dialog-preview { border: 1px solid #2a3140; border-radius: 12px; overflow: hidden; background: #1e2128; }
+    .dlg-mock { padding: 0; }
+    .combo { position: relative; }
+    .combo .caret {
+      position: absolute; right: 9px; top: 50%; transform: translateY(-50%);
+      color: #6b7382; font-size: 10px; pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <h2 class="title">Local Cred Vault · 静态预览（非交互）</h2>
+
+  <div class="preview-row">
+    <section>
+      <div class="label">Popup · 420 × 480</div>
+      <div class="popup-frame">
+        <div class="popup" style="position:relative; width:420px; max-height:480px; display:flex; flex-direction:column; overflow:hidden;">
+          <header class="hd">
+            <div class="brand"><span class="dot"></span>Local Cred Vault</div>
+            <button class="btn btn-ghost btn-sm">管理</button>
+          </header>
+          <div class="toolbar">
+            <input type="search" placeholder="搜索项目 / 地址 / 账号">
+            <select>
+              <option selected>按项目</option>
+              <option>按地址</option>
+              <option>不分组</option>
+            </select>
+          </div>
+          <main class="list">
+            <div class="group-title">内部工具<span class="count">1</span></div>
+            <div class="entry">
+              <div class="entry-main">
+                <div class="entry-line1"><span class="entry-addr">未填写地址</span></div>
+                <div class="entry-line2">
+                  <span class="entry-user">ops</span>
+                  <span class="entry-pwd">••••••</span>
+                </div>
+              </div>
+              <div class="entry-actions">
+                <button class="btn btn-sm">账号</button>
+                <button class="btn btn-primary btn-sm">复制</button>
+              </div>
+            </div>
+
+            <div class="group-title">后台管理<span class="count">1</span></div>
+            <div class="entry">
+              <div class="entry-main">
+                <div class="entry-line1"><span class="entry-addr">http://localhost:9090</span></div>
+                <div class="entry-line2">
+                  <span class="entry-user">admin</span>
+                  <span class="entry-pwd">•••••</span>
+                </div>
+              </div>
+              <div class="entry-actions">
+                <button class="btn btn-sm">账号</button>
+                <button class="btn btn-primary btn-sm">复制</button>
+              </div>
+            </div>
+
+            <div class="group-title">订单系统<span class="count">2</span></div>
+            <div class="entry">
+              <div class="entry-main">
+                <div class="entry-line1"><span class="entry-addr">http://localhost</span></div>
+                <div class="entry-line2">
+                  <span class="entry-user">admin</span>
+                  <span class="entry-pwd">••••••••</span>
+                  <span class="entry-remark">dev 环境</span>
+                </div>
+              </div>
+              <div class="entry-actions">
+                <button class="btn btn-sm">账号</button>
+                <button class="btn btn-primary btn-sm">复制</button>
+              </div>
+            </div>
+            <div class="entry">
+              <div class="entry-main">
+                <div class="entry-line1"><span class="entry-addr">http://localhost:8080</span></div>
+                <div class="entry-line2">
+                  <span class="entry-user">dev</span>
+                  <span class="entry-pwd">••••••••••</span>
+                </div>
+              </div>
+              <div class="entry-actions">
+                <button class="btn btn-sm">账号</button>
+                <button class="btn btn-primary btn-sm">复制</button>
+              </div>
+            </div>
+
+            <div class="group-title">网关服务<span class="count">1</span></div>
+            <div class="entry">
+              <div class="entry-main">
+                <div class="entry-line1"><span class="entry-addr">http://localhost</span></div>
+                <div class="entry-line2">
+                  <span class="entry-user">root</span>
+                  <span class="entry-pwd">••••••••••••</span>
+                </div>
+              </div>
+              <div class="entry-actions">
+                <button class="btn btn-sm">账号</button>
+                <button class="btn btn-primary btn-sm">复制</button>
+              </div>
+            </div>
+          </main>
+          <footer class="ft">
+            <span>5 条</span>
+            <button class="btn btn-ghost btn-sm">新增凭据</button>
+          </footer>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="label">新增 / 编辑弹窗</div>
+      <div class="dialog-preview" style="width:420px;">
+        <h2 style="font-size:15px; font-weight:500; margin:0; padding:16px 18px 12px; border-bottom:1px solid #333944;">新增凭据</h2>
+        <div class="dialog-body">
+          <div class="field">
+            <label>项目名 <span class="req">必填</span></label>
+            <div class="combo">
+              <input value="订单系统" readonly style="padding-right:26px;">
+              <span class="caret">▼</span>
+            </div>
+            <div class="hint">下拉选已有项目，或直接输入新项目名</div>
+          </div>
+          <div class="field">
+            <label>登录地址 <span class="opt">选填</span></label>
+            <input value="localhost:8080" readonly>
+            <div class="hint">将保存为 http://localhost:8080</div>
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label>账号</label>
+              <input value="dev" readonly>
+            </div>
+            <div class="field">
+              <label>密码</label>
+              <div class="field-row">
+                <input value="Tr8#kQ2!vLm9@xWp4Zq1" readonly style="font-family:var(--mono);">
+                <button class="btn">生成</button>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label>备注</label>
+            <input value="dev 环境，数据每天凌晨重置" readonly>
+          </div>
+        </div>
+        <div class="dialog-foot">
+          <button class="btn">取消</button>
+          <button class="btn btn-primary">保存</button>
+        </div>
+      </div>
+    </section>
+
+    <section style="width: 100%;">
+      <div class="label">Options · 完整管理页</div>
+      <div class="options-frame">
+        <div class="wrap" style="padding:24px;">
+          <header class="hd">
+            <div>
+              <h1>Local Cred Vault</h1>
+              <div class="sub">按登录地址与项目分组管理本地开发环境的账号密码</div>
+            </div>
+            <div class="hd-actions">
+              <button class="btn">导入备份</button>
+              <button class="btn">加密导出</button>
+              <button class="btn btn-primary">新增凭据</button>
+            </div>
+          </header>
+
+          <div class="toolbar-wide">
+            <input class="grow" type="search" placeholder="搜索项目 / 地址 / 账号 / 备注">
+            <select>
+              <option selected>按项目分组</option>
+              <option>按地址分组</option>
+              <option>不分组</option>
+            </select>
+            <span class="sub">5 条</span>
+          </div>
+
+          <div class="panel rows">
+            <div class="group-title" style="position:static;">内部工具<span class="count">1</span></div>
+            <div class="entry">
+              <div class="entry-main">
+                <div class="entry-line1"><span class="entry-addr">未填写地址</span></div>
+                <div class="entry-line2">
+                  <span class="entry-user">ops</span>
+                  <span class="entry-pwd">••••••</span>
+                </div>
+              </div>
+              <div class="entry-actions">
+                <button class="btn btn-sm">复制账号</button>
+                <button class="btn btn-sm btn-primary">复制密码</button>
+                <button class="btn btn-sm">编辑</button>
+                <button class="btn btn-sm btn-danger">删除</button>
+              </div>
+            </div>
+
+            <div class="group-title" style="position:static;">订单系统<span class="count">2</span></div>
+            <div class="entry">
+              <div class="entry-main">
+                <div class="entry-line1"><span class="entry-addr">http://localhost</span></div>
+                <div class="entry-line2">
+                  <span class="entry-user">admin</span>
+                  <span class="entry-pwd">••••••••</span>
+                  <span class="entry-remark">dev 环境，数据每天凌晨重置</span>
+                </div>
+              </div>
+              <div class="entry-actions">
+                <button class="btn btn-sm">复制账号</button>
+                <button class="btn btn-sm btn-primary">复制密码</button>
+                <button class="btn btn-sm">编辑</button>
+                <button class="btn btn-sm btn-danger">删除</button>
+              </div>
+            </div>
+            <div class="entry">
+              <div class="entry-main">
+                <div class="entry-line1"><span class="entry-addr">http://localhost:8080</span></div>
+                <div class="entry-line2">
+                  <span class="entry-user">dev</span>
+                  <span class="entry-pwd">••••••••••</span>
+                </div>
+              </div>
+              <div class="entry-actions">
+                <button class="btn btn-sm">复制账号</button>
+                <button class="btn btn-sm btn-primary">复制密码</button>
+                <button class="btn btn-sm">编辑</button>
+                <button class="btn btn-sm btn-danger">删除</button>
+              </div>
+            </div>
+
+            <div class="group-title" style="position:static;">网关服务<span class="count">1</span></div>
+            <div class="entry">
+              <div class="entry-main">
+                <div class="entry-line1"><span class="entry-addr">http://localhost</span></div>
+                <div class="entry-line2">
+                  <span class="entry-user">root</span>
+                  <span class="entry-pwd">••••••••••••</span>
+                </div>
+              </div>
+              <div class="entry-actions">
+                <button class="btn btn-sm">复制账号</button>
+                <button class="btn btn-sm btn-primary">复制密码</button>
+                <button class="btn btn-sm">编辑</button>
+                <button class="btn btn-sm btn-danger">删除</button>
+              </div>
+            </div>
+          </div>
+
+          <p class="foot-note">
+            凭据以明文保存在本机 Chrome 的扩展存储中（<code>chrome.storage.local</code>），读取不需要口令 —— 这是为了免密快速取用而做的取舍。<br>
+            因此本插件适合存放本地开发、测试环境的账号；请勿用于存放银行、主邮箱等真实资产口令。
+          </p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <p class="hint">
+    本页面只展示 UI。要真正启用，请按 README 在 Chrome 中「加载已解压的扩展程序」。
+  </p>
+</body>
+</html>

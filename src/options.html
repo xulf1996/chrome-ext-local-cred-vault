@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Local Cred Vault · 管理</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="options">
+  <div class="wrap">
+    <header class="hd">
+      <div>
+        <h1>Local Cred Vault</h1>
+        <div class="sub">按登录地址与项目分组管理本地开发环境的账号密码</div>
+      </div>
+      <div class="hd-actions">
+        <button id="btnNew" class="btn btn-primary">新增凭据</button>
+      </div>
+    </header>
+
+    <div id="filebar" class="filebar"></div>
+
+    <div class="toolbar-wide">
+      <input id="search" class="grow" type="search" placeholder="搜索项目 / 地址 / 账号 / 备注" autocomplete="off" spellcheck="false">
+      <select id="groupBy" title="分组方式">
+        <option value="project">按项目分组</option>
+        <option value="origin">按地址分组</option>
+        <option value="none">不分组</option>
+      </select>
+      <span id="count" class="sub"></span>
+    </div>
+
+    <div id="list" class="panel rows"></div>
+
+    <p class="foot-note">
+      数据保存在<strong>你自己选择的本地 JSON 文件</strong>里，明文存储、读取无需口令，可以随时用文本编辑器打开、交给 Git 管理或复制到别处。<br>
+      每次改动整体覆写该文件；写入是原子的（先写临时文件再替换，中途失败不会损坏原文件）。<br>
+      插件只申请 <code>clipboardWrite</code> 权限，不接触你浏览的任何网页。文件句柄存在浏览器 IndexedDB 中，
+      浏览器重装或清除扩展数据后需要重新选择一次文件。<br>
+      本插件适合存放本地开发、测试环境的账号，请勿用于存放银行、主邮箱等真实资产口令。
+    </p>
+  </div>
+
+  <dialog id="dlgEdit">
+    <h2 id="dlgEditTitle">新增凭据</h2>
+    <form id="formEdit" novalidate>
+      <div class="dialog-body">
+        <div class="field">
+          <label for="f-project">项目名 <span class="req">必填</span></label>
+          <input id="f-project" name="project" list="projectList" placeholder="选择已有项目，或直接输入新项目名" autocomplete="off">
+          <datalist id="projectList"></datalist>
+        </div>
+        <div class="field">
+          <label for="f-origin">登录地址 <span class="opt">选填</span></label>
+          <input id="f-origin" name="origin" placeholder="localhost:8080（可以不填）" autocomplete="off" spellcheck="false">
+          <div class="hint" id="originHint"></div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label for="f-username">账号</label>
+            <input id="f-username" name="username" placeholder="admin" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="f-password">密码</label>
+            <div class="field-row">
+              <input id="f-password" name="password" type="text" placeholder="••••••••" autocomplete="off" spellcheck="false">
+              <button type="button" id="btnGen" class="btn" title="生成一个 20 位强密码">生成</button>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label for="f-remark">备注</label>
+          <input id="f-remark" name="remark" placeholder="dev 环境，数据每天凌晨重置" autocomplete="off">
+        </div>
+      </div>
+      <div class="dialog-foot">
+        <button type="button" class="btn" data-close>取消</button>
+        <button type="submit" id="btnSave" class="btn btn-primary">保存</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="dlgConfirm">
+    <h2>确认</h2>
+    <div class="dialog-body">
+      <p class="note" id="dlgConfirmText"></p>
+    </div>
+    <div class="dialog-foot">
+      <button type="button" class="btn" data-close>取消</button>
+      <button type="button" id="btnConfirmGo" class="btn btn-danger">删除</button>
+    </div>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" hidden></div>
+  <script type="module" src="options.js"></script>
+</body>
+</html>

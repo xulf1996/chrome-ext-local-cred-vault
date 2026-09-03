@@ -1,0 +1,16 @@
+# workbuddy 协作缓存（含对话历史、个人笔记）
+.workbuddy/
+
+# 插件的数据文件 —— 用户在浏览器里实际保存的凭据
+# （不是源码，每个用户/机器都不一样）
+cred-vault.json
+
+# 通用噪声
+*.bak
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+
+# 如果将来加 Node 构建步骤
+node_modules/
