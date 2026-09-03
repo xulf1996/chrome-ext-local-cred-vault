@@ -1,93 +1,98 @@
 # Local Cred Vault
 
-一个按「登录地址 + 项目」维度管理本地开发账号密码的 Chrome 扩展。
-解决 Chrome 原生密码管理器在同一个 origin（典型的 `localhost:80`）下只能存一份凭据的痛点。
+A Chrome extension that manages local-dev account passwords by the dimensions of **login origin + project**.
+Solves the pain point of Chrome's built-in password manager only being able to store one credential per origin (e.g. `localhost:80`).
 
-## 功能
+## Features
 
-- **以项目为主维度**：项目名**必填**，登录地址**选填**；列表默认按项目分组
-- **项目可复用**：新增时从下拉里选已有项目，也可直接敲一个新的项目名
-- **一键复制**：密码、账号；复制后 30 秒自动清空剪贴板
-- **本地 JSON 文件存储**：你选一个本地 `.json` 文件作为数据文件，插件读写它；可放进 Git、跨机器拷、文本编辑器打开看
-- **强密码生成**：20 位，含大小写 / 数字 / 符号
-- **零页面权限**：不注入任何 content script，不读取你浏览的网页内容
-- **防重提交**：新增 / 删除 / 切换分组等任何写操作都有四层防护（详见下文）
-- **可移植**：`preview/index.html` 可以直接双击打开看 UI
+- **Project-first organization**: project name is **required**, login origin is **optional**; the list is grouped by project by default.
+- **Reusable project names**: pick an existing project from the dropdown, or type a brand-new one.
+- **One-click copy**: copy password or username; the clipboard is auto-cleared 30 seconds later.
+- **Local JSON file storage**: you choose a local `.json` file as the data file; the extension reads and writes it. Drop it into Git, copy it across machines, or open it in any text editor.
+- **Strong password generator**: 20 characters, mixing upper / lower / digits / symbols.
+- **Zero page permissions**: no content script injected, nothing read from the pages you browse.
+- **Duplicate-submission protection**: every write path (add / delete / change grouping) has four layers of defense (see below).
+- **Portable preview**: `preview/index.html` opens in a browser by double-click to see the UI.
 
-## 数据怎么存
+## How data is stored
 
-数据保存在**你自己选择的一个本地 JSON 文件**里（典型位置：`cred-vault.json`）。
-插件只声明 `clipboardWrite` 一个权限，文件句柄存在浏览器自己的 IndexedDB 里，
-**不读你浏览的任何网页、不写 `chrome.storage`**。
+Data lives in a **single local JSON file you pick** (typical location: `cred-vault.json`).
+The extension declares only one permission: `clipboardWrite`. The file handle is kept in the browser's IndexedDB.
+**It does not read pages you browse, and does not write to `chrome.storage`.**
 
-- 文件路径由你决定，可以放在任何目录（项目内、网盘同步目录、Git 仓库里都行）
-- 写入是原子的：先写临时文件再替换，写到一半失败也不会损坏原文件
-- 浏览器重启后首次打开插件，会弹一次授权确认（这是 File System Access API 的标准行为）
-- 想换数据文件：在管理页点「切换文件」或「另存为副本」
+- You choose the file path — anywhere you want (inside a project, in a cloud-sync folder, in a Git repo, etc.).
+- Writes are atomic: write to a temp file, then replace. A failed mid-write will not corrupt the original file.
+- After a browser restart, the first time you open the extension you'll be prompted to re-authorize the file (standard File System Access API behavior).
+- To switch data files: in the management page click "Switch file" or "Save copy".
 
-**凭据是明文存的**（这是按你的选择——"反正是我自己在本地使用"）。
-本机任何能读该文件的程序都能看到它。请勿用于存放银行、主邮箱等真实资产口令。
-想迁移或备份，用「另存为副本」即可。
+**Credentials are stored in plaintext** (by your explicit choice — "I'm the only one using it locally").
+Any program on your machine that can read the file can see the contents. Do not use this for bank, primary email, or other high-value passwords.
+To migrate or back up, use "Save copy".
 
-## 防重提交（四层）
+## Duplicate-submission protection (four layers)
 
-| 层 | 机制 | 在哪个文件 |
+| Layer | Mechanism | Where it lives |
 |---|---|---|
-| 1 | UI 按钮 busy 时禁用 | `src/options.js` 的 `busy` 标志 + `btnSave.disabled` |
-| 2 | 写入单飞队列：并发 save 会被合并、不会交错 | `src/js/store.js` 的 `writing` / `pending` / `drain` |
-| 3 | 写入原子化：先写临时文件再替换 | `src/js/store.js` 的 `writeTo` |
-| 4 | 稳定 ID：新增时预生成 id，重复提交天然幂等 | `src/js/storage.js` 的 `newId()` + `options.js` 的 `editingId` |
+| 1 | UI button disabled while `busy` | `src/options.js` `busy` flag + `btnSave.disabled` |
+| 2 | Single-flight write queue: concurrent saves are coalesced, never interleaved | `src/js/store.js` `writing` / `pending` / `drain` |
+| 3 | Atomic commit: write to a temp file, then replace | `src/js/store.js` `writeTo` |
+| 4 | Stable entry IDs: pre-generate the id on add, making double-submit idempotent | `src/js/storage.js` `newId()` + `options.js` `editingId` |
 
-四层任何一层单独都能挡住重复点击；但只靠一层容易在边界场景漏掉（比如按钮 disable 在网络慢的场景失效）。
-四层叠加后，**即便前两层都失效也不会产生重复条目**。
+Any single layer can block a duplicate click on its own, but each has an edge case where it can fail in isolation (e.g. button-disable fails on a slow network).
+With all four stacked, **even if the first two layers fail, you will not get a duplicate entry**.
 
-## 安装
+## Installation
 
-1. 打开 Chrome，进入 `chrome://extensions/`
-2. 右上角打开「开发者模式」
-3. 点「加载已解压的扩展程序」
-4. 选择本仓库根目录（包含 `manifest.json` 的目录）
+1. Open Chrome and go to `chrome://extensions/`.
+2. Turn on **Developer mode** in the top-right corner.
+3. Click **Load unpacked**.
+4. Select the root of this repository (the directory containing `manifest.json`).
 
-更新代码后回到 `chrome://extensions/` 点击本插件的刷新图标即可。
+After updating the code, go back to `chrome://extensions/` and click the refresh icon on the extension card.
 
-## 使用
+## Usage
 
-- **点工具栏图标** → 弹出 popup：搜索 / 一键复制
-  - 默认**按项目分组**，右上角可切到「按地址」或「不分组」
-  - 搜索框里直接回车 → 复制第一条命中的密码
-  - 密码默认遮罩，点遮罩文字切换显示
-- **popup 右下角「新增」或「管理」** → 打开完整管理页：
-  - 增删改查
-  - 「生成」按钮生成强密码
-  - 「另存为副本」保存到另一个 JSON 文件
-  - 「从文件导入」按 ID 合并（同 ID 覆盖更新，其余追加）
-  - 「切换文件」换数据文件
+- **Click the toolbar icon** → popup opens: search / one-click copy
+  - Default is **grouped by project**; use the top-right dropdown to switch to "by origin" or "no grouping".
+  - Press Enter in the search box → copies the password of the first match.
+  - Passwords are masked by default; click the masked text to toggle.
+- **"Add" or "Manage" in the popup's bottom-right** → opens the full management page:
+  - Add / edit / delete entries
+  - "Generate" button produces a strong password
+  - "Save copy" writes a backup to another JSON file
+  - "Import from file" merges by ID (same ID is overwritten, others are appended)
+  - "Switch file" changes the active data file
 
-## 文件结构
+## File structure
 
 ```
-manifest.json                # Manifest V3 配置（权限仅 clipboardWrite）
+manifest.json                # Manifest V3 config (permissions: clipboardWrite only)
 src/
-  popup.html / popup.js      # 工具栏弹窗
-  options.html / options.js  # 完整管理页
-  style.css                  # 共享样式（深色主题）
+  popup.html / popup.js      # Toolbar popup
+  options.html / options.js  # Full management page
+  style.css                  # Shared styles (dark theme)
   js/
-    storage.js               # 数据模型、归一化、搜索、分组、合并、文件格式
-    store.js                 # File System Access 读写 + 写入单飞队列
-    idb.js                   # IndexedDB（存文件句柄）
-    ui.js                    # HTML 转义、密码遮罩、剪贴板、Toast、强密码生成
-  icons/                     # 16 / 48 / 128 PNG 图标
+    storage.js               # Data model, normalization, search, grouping, merge, file format
+    store.js                 # File System Access read/write + single-flight write queue
+    idb.js                   # IndexedDB (stores the file handle)
+    ui.js                    # HTML escaping, password masking, clipboard, toast, password generator
+  icons/                     # 16 / 48 / 128 PNG icons
 preview/
-  index.html                 # 静态 UI 预览（无功能，可直接浏览器打开）
+  index.html                 # Static UI preview (no functionality; open in browser directly)
 tools/
-  make_icons.py              # 重新生成图标
-  selftest.mjs               # 核心逻辑自测（node tools/selftest.mjs）
+  make_icons.py              # Regenerate icons
+  selftest.mjs               # Core-logic self-tests (node tools/selftest.mjs)
 ```
 
-## 自测
+## Self-tests
 
 ```bash
 node tools/selftest.mjs
 ```
 
-覆盖：地址归一化、分组与搜索、项目必填 / 地址选填、文件格式序列化往返、错误 JSON 拒绝、合并策略。
+Coverage: origin normalization, grouping and search, project-required / origin-optional, file format serialization round-trip, invalid JSON rejection, merge strategy.
+
+## Localization
+
+- `README.md` — English (this file)
+- `README_zh.md` — Simplified Chinese
